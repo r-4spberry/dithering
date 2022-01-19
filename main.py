@@ -138,15 +138,22 @@ try:
     window = Tk()
     canvas = Canvas(window, width = 560, height = 300+270-1)
     window.resizable(width=False, height=False)
+    
     item1 = canvas.create_rectangle(30, 30, 400-1, 270-1,
                 outline="grey82", fill="grey82")
     item1 = canvas.create_rectangle(30, 300, 400-1, 300+270-1-30,
                 outline="grey82", fill="grey82")
+    
     select = Button(text = "Select image", command = select_img)
+    select.place(x = 410, y = 30, width = 100, height = 35)
+    
     label = Label(text="Scale factor 0.0-1.0:")
     label.place(x = 410, y = 30+35+20)
     sfactor = StringVar()
-    another = IntVar()
+    
+    sfactor_ = Entry(textvariable=sfactor, font=("Courier", 16))
+    sfactor_.place(x = 410, y = 30+35+20+25, width = 100)
+    sfactor.set("1")
     
     wlabel1 = Label(text="Black threshold 0-255:")
     wlabel1.place(x = 410, y = 30+35+20+25+35+25)
@@ -154,7 +161,7 @@ try:
     wthreshold.set("10")
     wtreshold_ = Entry(textvariable = wthreshold, font = ("Courier", 16))
     wtreshold_.place(x = 410, y = 30+35+20+25+35+25+25, width = 100)
-    pipreqs
+    
     credit = Label(text="by r_4spberry 2022")
     credit.place(x = 430, y = 580-50-8)
     
@@ -165,19 +172,20 @@ try:
     btreshold_ = Entry(textvariable = bthreshold, font = ("Courier", 16))
     btreshold_.place(x = 410, y = 30+35+20+25+35+25+25+50, width = 100)
     
+    another = IntVar()
     mode = Checkbutton(text = "Another dither mode", variable = another)
     mode.place(x = 405, y = 30+35+20+25+33)
     another.set(0)
-    sfactor.set("1")
-    sfactor_ = Entry(textvariable=sfactor, font=("Courier", 16))
-    sfactor_.place(x = 410, y = 30+35+20+25, width = 100)
-    select.place(x = 410, y = 30, width = 100, height = 35)
+    
     run = Button(text = "Run", command = process)
     run.place(x = 410, y = 300, width = 100, height = 35)
+    
     show = Button(text = "Show image", command = show_image)
     show.place(x = 410, y = 300+35+20, width = 100, height = 35)
+    
     save = Button(text = "Save", command = save_image)
     save.place(x = 410, y = 300+35+20+35+20, width = 100, height = 35)
+    
     canvas.pack(side = TOP, expand=True, fill=BOTH)
     
     window.mainloop()
