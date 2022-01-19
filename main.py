@@ -2,7 +2,8 @@ from PIL import Image, ImageTk
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 from logging import getLogger, basicConfig, DEBUG
 from tkinter import ttk
-from tkinter import messagebox, Button, Label, StringVar, Entry, NW, Tk, Canvas, TOP, BOTH, IntVar, Checkbutton
+import random
+from tkinter import messagebox, Button, Label, StringVar, Entry, NW, Tk, OptionMenu, Canvas, TOP, BOTH, IntVar, Checkbutton
 basicConfig(filename='./myapp.log', level=DEBUG, 
                     format='%(asctime)s %(levelname)s %(name)s %(message)s')
 logger=getLogger(__name__)
@@ -35,6 +36,20 @@ try:
                 pixels[i, j] = 255 if pixels[i, j]/255 > M[i%n][j%n] and pixels[i, j] > wt or (not pixels[i, j] < bt) else 0
         return img
 
+    def random_dither(img):
+        wt = int(wthreshold.get())
+        bt = int(bthreshold.get())
+        pixelss = img.load()
+        for i in range(img.size[0]):
+            for j in range(img.size[1]):
+                if pixelss[i, j] >= bt:
+                    pixelss[i, j] = 255
+                elif pixelss[i, j] <= wt:
+                    pixelss[i, j] = 0
+                else:
+                    pixelss[i, j] = 255 if pixelss[i, j] > random.randrange(0,255) else 0
+        return img
+                
     def fs_dither(img):
         pixelss = img.load()
         pixels  = [[0]*img.size[1] for i in range(img.size[0])]
@@ -102,10 +117,17 @@ try:
             return
         size = img.size
         rimg = resize(img, q).convert('L')
-        if another.get():
+        option = another.get()
+        if option == "Random":
+            #rimg = fs_dither(rimg)
+            rimg = random_dither(rimg)
+        elif option == "Ordered":
+            rimg = ordered_dither(rimg, M)
+        elif option == "FS":
             rimg = fs_dither(rimg)
         else:
-            rimg = ordered_dither(rimg, M)
+            messagebox.showerror("Error", "Select the dithering metod")
+            return
         rimg = rimg.resize((rimg.size[0]*(size[0]//rimg.size[0]), rimg.size[1]*(size[1]//rimg.size[1])), Image.NEAREST)
         convimg = rimg
         tkimg2 = ImageTk.PhotoImage(image = crop(rimg))
@@ -172,10 +194,10 @@ try:
     btreshold_ = Entry(textvariable = bthreshold, font = ("Courier", 16))
     btreshold_.place(x = 410, y = 30+35+20+25+35+25+25+50, width = 100)
     
-    another = IntVar()
-    mode = Checkbutton(text = "Another dither mode", variable = another)
-    mode.place(x = 405, y = 30+35+20+25+33)
-    another.set(0)
+    another = StringVar()
+    mode = OptionMenu(window, another, "Ordered", "FS", "Random")
+    mode.place(x = 407, y = 30+35+20+25+33, width = 130)
+    another.set("Select Algorithm")
     
     run = Button(text = "Run", command = process)
     run.place(x = 410, y = 300, width = 100, height = 35)
