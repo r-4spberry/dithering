@@ -124,7 +124,7 @@ try:
             rimg = resize(img, q, Image.ANTIALIAS)
         else:
             rimg = resize(img, q, Image.NEAREST)
-        if option == "Random":  P
+        if option == "Random":  
             #rimg = fs_dither(rimg)
             rimg = random_dither(rimg.convert('L'))
         elif option == "Ordered":
