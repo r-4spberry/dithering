@@ -18,6 +18,9 @@ try:
         42,26,38,22,41,25,37,21]
     M = [list(map(lambda x: x / 64, m[i:i+8])) for i in range(0, len(m), 8)]
 
+    def pixelate(img):
+        return img
+
     def reverse(x):
         result = 0
         n = len(bin(x))-2
@@ -87,8 +90,8 @@ try:
                         pass
         return img
 
-    def resize(img, q):
-        return img.resize((int(img.size[0]*q), int(img.size[1]*q)), resample=Image.BILINEAR)
+    def resize(img, q, mode):
+        return img.resize((int(img.size[0]*q), int(img.size[1]*q)), resample=mode)
 
     def crop(img):
         img1 = img.resize((400-30, int(img.size[1]*(400-30)/img.size[0])))
@@ -116,15 +119,20 @@ try:
             messagebox.showerror("Error", "Wrong resize factor")
             return
         size = img.size
-        rimg = resize(img, q).convert('L')
         option = another.get()
-        if option == "Random":
+        if option != "Pixelate":
+            rimg = resize(img, q, Image.ANTIALIAS)
+        else:
+            rimg = resize(img, q, Image.NEAREST)
+        if option == "Random":  P
             #rimg = fs_dither(rimg)
-            rimg = random_dither(rimg)
+            rimg = random_dither(rimg.convert('L'))
         elif option == "Ordered":
-            rimg = ordered_dither(rimg, M)
+            rimg = ordered_dither(rimg.convert('L'), M)
         elif option == "FS":
-            rimg = fs_dither(rimg)
+            rimg = fs_dither(rimg.convert('L'))
+        elif option == "Pixelate":
+            rimg = pixelate(rimg)
         else:
             messagebox.showerror("Error", "Select the dithering metod")
             return
@@ -195,7 +203,7 @@ try:
     btreshold_.place(x = 410, y = 30+35+20+25+35+25+25+50, width = 100)
     
     another = StringVar()
-    mode = OptionMenu(window, another, "Ordered", "FS", "Random")
+    mode = OptionMenu(window, another, "Ordered", "FS", "Random", "Pixelate")
     mode.place(x = 407, y = 30+35+20+25+33, width = 130)
     another.set("Select Algorithm")
     
